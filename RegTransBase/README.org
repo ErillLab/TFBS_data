@@ -1,0 +1,7 @@
+* RegTransBase
+
+RegTransBase ([[http://www.biomedcentral.com/1471-2164/14/213][Cipriano et al.]]) is a database of regulatory sequences and
+interactions in bacterial genomes. It consists of two modules:
+- database of regulatory interactions
+- manually curated database of transcription factor binding sites.
+
