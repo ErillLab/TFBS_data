@@ -1,4 +1,7 @@
 CollecTF [http://collectf.umbc.edu/] is a database of transcription factor
 binding sites in the Bacteria domain.
 
-The data in tab-delimited text file is available [[http://collectf.umbc.edu/browse/release_history/][here]].
+The tab-separated file contains all experimentally verified binding sites
+curated in the database.
+
+The latest release is available [[http://collectf.umbc.edu/browse/release_history/][here]].
