@@ -1,0 +1,276 @@
+# dbRegulation - an annotators database for the regulation of experimental evidence on genomic coordinates.
+# Maintainors: Alexey Kazakov, Michael Cipriano
+# References: Kazakov AE, Cipriano MJ, Novichkov PS, Minovitsky S, Vinogradov DV, Arkin A, Mironov AA, Gelfand MS, Dubchak I: RegTransBase--a database of regulatory sequences and interactions in a wide range of prokaryotic genomes. Nucleic Acids Res 2007, 35(Database issue):D407-412.  (http://www.ncbi.nlm.nih.gov/pubmed/17142223)
+# Date last update: 2013-02-13
+
+Regulatory elements
+-------------------
+All following tables contain lists of correspondent regulatory elements.
+
+Common fields:
+        <regelem>_guid - unique identifier
+        pkg_guid - determine package (link to packages)
+        art_guid - determine article (link to articles)
+        genome_guid - determine genome (link to dict_genomes)
+        name - regulatory element name
+        fl_real_name - boolean, determine whether name is "real" (i.e. does it belong to some systematic nomenclature or was introduced by article authors)
+        descript - some description in free form
+
+effectors
+        <only common fields>
+
+genes
+        location - textual description of gene location
+        ref_bank1 - databank reference 
+        ref_bank2 - -//-
+        ref_bank3 - -//-
+        ref_bank4 - -//-
+        signature - DNA sequence (long enough to determine gene in genome)
+        metabol_path - metabolic pathway
+        ferment_num - EC number
+        gene_function - short description of gene function
+
+helices - determine secondary structure
+        sec_struct_guid - corresponding secondary structure (link to sec_structures)
+        pos_from1 - start position of the first stem
+        pos_to1 - end position of the first stem
+        pos_from2 - start position of the second stem
+        pos_to2 - end position of the second stem
+
+locuses
+        location - textual description of gene location
+
+operons
+        <only common fields>    
+
+regulators
+        fl_prot_rna - protein or RNA
+        regulator_type_guid - type of regulator (link to dict_regulator_types)
+        gene_guid - corresponding gene (link to gene encoding the regulator)
+        ref_bank1 - databank reference
+        ref_bank2 - -//-
+        ref_bank3 - -//-
+        ref_bank4 - -//-
+        consensus - binding site consesus sequence
+        family - family of regulators
+
+regulons
+        regulator_guid - determine corresponding regulator (link to regulators)
+
+sec_structures
+        pos_from - start position (relative to some regulatory element)
+        pos_from_guid - regulatory element to which start of the secondary structure is binded (link to some table with regulatory elements)
+        pfo_type_id - type of this regulatory element (link to obj_types)
+        pfo_side_guid - location in this regulatory element to which start is binded (e.g. start, end, transcription start, translation start etc.; link to dict_obj_side_types)        
+        pos_to - end position (relative to some regulatory element)
+        pos_to_guid - regulatory element dto which end position is binded (link to some table with regulatory elements)
+        pto_type_id - type of this regulatory element (link to obj_types)
+        pto_side_guid - location in this regulatory element to which end is binded (e.g. start, end, transcription start, translation start etc.; link to dict_obj_side_types)  
+        sequence - secondary structure sequence
+
+sites
+        func_site_type_guid - functional type (link to dict_func_site_types)
+        struct_site_type_guid - structural type (link to dict_struct_site_types)
+        regulator_guid - corresponding regulator (link to regulators)
+        fl_dna_rna - DNA or RNA
+        pos_from - start position (relative to some regulatory element)
+        pos_from_guid - regulatory element to which start of the secondary structure is binded (link to some table with regulatory elements)
+        pfo_type_id - type of this regulatory element (link to obj_types)
+        pfo_side_guid - location in this regulatory element to which start is binded (e.g. start, end, transcription start, translation start etc.; link to dict_obj_side_types)        
+        pos_to - end position (relative to some regulatory element)
+        pos_to_guid - regulatory element to which end position is binded (link to some table with regulatory elements)
+        pto_type_id - type of this regulatory element (link to obj_types)
+        pto_side_guid - location in this regulatory element to which end is binded (e.g. start, end, transcription start, translation start etc.; link to dict_obj_side_types)  
+        site_len - site length
+        sequence - site sequence (a number can be placed within this field to represent a particular length of unknown sequence (N's)
+        signature - site signature (part of sequence long enough to find site in genome reliably if site sequence is too short) (a number can be placed within this field to represent a particular length of unknown sequence (N's)
+
+transcripts
+        pos_from - start position (relative to some regulatory element)
+        pos_from_guid - regulatory element to which start of the secondary structure is binded (link to some table with regulatory elements)
+        pfo_type_id - type of this regulatory element (link to obj_types)
+        pfo_side_guid - location in this regulatory element to which start is binded (e.g. start, end, transcription start, translation start etc.; link to dict_obj_side_types)        
+        pos_to - end position (relative to some regulatory element)
+        pos_to_guid - regulatory element dto which end position is binded (link to some table with regulatory elements)
+        pto_type_id - type of this regulatory element (link to obj_types)
+        pto_side_guid - location in this regulatory element to which end is binded (e.g. start, end, transcription start, translation start etc.; link to dict_obj_side_types)  
+        tr_len - transcript length
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Data hierarchy
+--------------
+
+packages
+        pkg_guid - unique identifier
+        title - package title
+        annotator_id - id of annotator working with this package (link to db_users)
+        article_num - number of articles in package
+        pkg_state - 1 - just created, 2 - sent for annotation, 3 - annotated, 4 - returned to annotator for correction, 5 - accepted into database
+        pkg_state_date - date of last pkg_state modification
+
+
+articles
+        art_guid - unique identifier
+        pkg_guid - determine package (link to packages)
+        title - article title
+        author - article author
+        pmid - PubMed ID
+        art_journal - journal name
+        art_year - year of publication
+        art_month - month of publication
+        art_volume - volume of journal
+        art_issue - issue of journal
+        art_pages - pages 
+        art_abstruct - abstract
+        exp_num - number of experiments described
+        art_state - 0 - not yet reviewed, 1 - currently reviewed, 2 - review completed, 3 - article is unrelated, 4 - article is unclear
+
+experiments
+        exp_guid - unique identifier
+        pkg_guid - determine package (link to packages)
+        art_guid - determine article (link to articles)
+        descript - text description
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Experiment types
+----------------
+
+exp2result_types - matches experiment with all its result type
+        pkg_guid - determine package (link to packages)
+        art_guid - determine article (link to articles)
+        exp_guid - determine experiment (link to experiments)
+        exp_result_type_guid - determine result type
+
+exp2technique_types - matches experiment with all its technique type
+        pkg_guid - determine package (link to packages)
+        art_guid - determine article (link to articles)
+        exp_guid - determine experiment (link to experiments)
+        exp_technique_type_guid -  determine technique type
+
+exp_sub_objects - matches an experiment with all its subobjects
+        pkg_guid - determine package (link to packages)
+        art_guid - determine article (link to articles)
+        exp_guid - determine experiment (link to experiments)
+        obj_guid - determine linked object
+        obj_type_id - type of linked object
+        order_num - number in list of all subobjects for a given experiment (to keep their order)
+        strand - DNA strand where subobject reside (where applied)
+
+reg_elem_sub_objects - matches an regulatory element with all its subobjects
+        pkg_guid - determine package (link to packages)
+        art_guid - determine article (link to articles)
+        parent_guid - determine regulatory element (link to some regulatory elements table)
+        parent_type_id - regulatory element type (link to obj_types)
+        child_guid - determine subobject (link to some regulatory element table)
+        child_type_id - subobject type (link to obj_types)
+        child_n - index of children (to keep their order)
+        strand - DNA strand where subobject reside (where applied)
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Dictionaries/vocabularies
+-------------------------
+
+Common fields:
+        <table-name>_guid - unique identifier
+        name - text value
+
+dict_exp_result_types - possible experiment result types (site prediction, promoter mapping etc.)
+
+dict_exp_technique_types - possible experiment technique types (southern blot, footprinitng etc.)
+
+dict_func_site_types - possible functional site types (activator, promoter etc.)
+
+dict_genomes - genomes
+
+dict_obj_side_types - possible locations of binding to other regulatory elements (begin/end, transcription start/end etc.)
+
+dict_regulator_types - possible regulator types
+
+dict_struct_site_types - possible types of structural sites (palindrome, tandem repeat etc.)
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Dictionary correspondence
+-------------------------
+
+These tables contatains matches between dictionaries from XML files and those, stored in database in corresponding dict_* tables. 
+Common fields:
+        pkg_name - value from XML
+        db_name - value from database
+
+h_dict_exp_result_types 
+
+h_dict_exp_technique_types
+
+h_dict_func_site_types 
+
+h_dict_genomes 
+
+h_dict_obj_side_types
+
+h_dict_regulator_types 
+
+h_dict_struct_site_types 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+System
+------
+
+db_user_roles - possible roles of users - curator and annotator
+        id - id
+        role_name - name
+
+db_users - lists of database users
+        id 
+        user_role_id - curator or annotator (link to db_user_roles)
+        name - internal identifier
+        full_name - surname and initials
+        phone - contact phone
+        email - e-mail address
+        fl_active - active/not-active
+
+guids - maximal used guid for every object type 
+        obj_type - object type (link to obj_types)
+        max_guid - maximal value
+
+obj_name_genomes - store genomes for every regulatory element 
+        obj_guid - GUID for regulatory element
+        pkg_guid - determine package
+        art_guid - determine article
+        name - genome name
+        genome_guid - determine genome
+        obj_type_id - determine regulatory element type
+
+obj_sub_types - define regulator types hierarchy
+        parent_obj_type_id - parent type id (link to obj_type or 0 if child type can exists on its own)
+        child_obj_type_id - child type id (link to obj_type)
+
+obj_synonyms - define synonym for an object
+        pkg_guid, art_guid - determine article
+        obj_guid - determine object
+        syn_name - synonym
+        fl_real_name - boolean, whether this synonym is "real"
+
+obj_types - possible regulatory elements types
+        id - id for links
+        obj_type_name - name of regulatory element type 
+        obj_tbname - name of corresponding database table (usually simply plural form of the type name)
+        cp_order - index of type (to keep their order)
+
+pkg_history - history of operations with packages
+        pkg_guid - determine package (link to packages)
+        event_date - date of operation
+        event_operation - description of operation
+        user_by_id - id of user who performed operation
+        user_by_name - name of user who performed operation
+        user_by_role - role of user who performed operation
+        user_by_email - email of user who performed operation
+        user_by_phone - phone number of user who performed operation
+        user_to_id - id of user who participate in operation
+        user_to_name - name of user who participate in operation
+        user_to_role - role of user who participate in operation
+        user_to_email - e-mail of user who participate in operation
+        user_to_phone - phone number of user who participate in operation
+
+
+
