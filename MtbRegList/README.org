@@ -3,9 +3,9 @@
 MtbRegList is a database containing gene expression and regulation data in
 /M. tuberculosis/. The python script in this repository reads the tab-delimited
 text file exported from MtbRegList, filters transcription factor binding site
-records and reconstructs the binding sites using /M. tuberculosis/ H37Rv genome
-and given binding site location relative to its flanking genes. The script
-generates a comma-separated file containing
+records and reconstructs the binding site sequences using /M. tuberculosis/
+H37Rv genome and given binding site location relative to its flanking genes. The
+script generates a comma-separated file containing
 - genome accession number
 - TF locus tag
 - TF name synonyms
@@ -14,7 +14,7 @@ generates a comma-separated file containing
 - site strand
 - site sequence
 
-The file =mtbreglist_sample.csv= contains a small subset of the data. To create the whole data set,
+The file =mtbreglist_head.csv= contains a small subset of the data. To create the whole data set,
 follow the steps described in the following section.
 
 * Getting and cleaning data
@@ -28,15 +28,34 @@ the =DNA Motif (Instance)= as the motif search type and using the default
 settings for the rest. Search results were saved in tab-delimited text file
 (using the link at the bottom of the page) for further processing.
 
+** Filtering transcription factor binding site records
+The records for transcription start sites and terminators are filtered out so
+that the resulting data table contains only data related to TF binding sites.
+
 ** Fixing locus tags
 /M. tuberculosis/ has locus tags in format =Rv\d+=. However, for some reason,
 some of the locus tags in MtbRegList results file don't match with any gene in
 [[http://www.ncbi.nlm.nih.gov/nuccore/NC_000962][NCBI RefSeq record]]. It seems that some locus tags (RNA coding genes) have been
 updated at some point in NCBI RefSeq database. These locus tags in MtbRegList
-result file have been replaced with ones in the genbank file if start and end
+result file were replaced with ones in the genbank file if start and end
 positions match. The genomic locations for old locus tags can be found at
 http://tuberculist.epfl.ch/ by searching the locus tag. See script for details.
 
+** Reconstructing binding site sequences
+MtbRegList database doesn't provide the binding site sequence and genomic
+location explicitly. Instead it provides the signature and distances to
+flanking genes.
+- The signature of the site which has the pattern =S@m[/SP/S@m]= where =S= stands
+  for sequence box, =SP= for spacing (the length of spacer region) and =m= for
+  mismatch count relative to its root parent. For more information, see
+  MtbRegList paper.
+- 5' and 3' distances are the distances to the upstream and downstream
+  genes. If the site is in the coding region, they are distances to the 5' and
+  3' prime of the gene that the site is in.
 
-
+These two piece of information, with the genome record retrieved from NCBI
+RefSeq, were used to reconstruct the binding site sequences. Distances and
+neighbor gene locations were used to compute binding site location, and the
+signature was used to verify computed locations and to identify the strand of
+the binding site.
 

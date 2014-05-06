@@ -170,5 +170,6 @@ def read_mtbreglist(export_file="results.txt"):
                      'strand',
                      'site']
     df.to_csv("mtbreglist.csv", sep=",", cols=cols_to_write, index=False)
+    #df.head().to_csv("mtbreglist_head.csv", sep=",", cols=cols_to_write, index=False)
     return df
 
