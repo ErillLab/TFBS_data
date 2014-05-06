@@ -1,0 +1,23 @@
+* MtbRegList
+
+MtbRegList is a database containing gene expression and regulation data in
+/M. tuberculosis/. The python script in this repository reads the tab-delimited
+text file exported from MtbRegList, filters transcription factor binding site
+records and reconstructs the binding sites using /M. tuberculosis/ H37Rv genome
+and given binding site location relative to its flanking genes. The script
+generates a comma-separated file containing
+- genome accession number
+- TF locus tag
+- TF name synonyms
+- site start position
+- site end position
+- site strand
+- site sequence
+
+* Getting and cleaning data
+
+** Exporting MtbRegList results
+
+
+
+
