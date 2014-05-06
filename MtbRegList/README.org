@@ -15,7 +15,7 @@ script generates a comma-separated file containing
 - site sequence
 
 The file =mtbreglist_head.csv= contains a small subset of the data. To create the whole data set,
-follow the steps described in the following section.
+the script performs the steps described in the following section.
 
 * Getting and cleaning data
 This section describes the steps that were followed to reorganize the data to
@@ -59,3 +59,6 @@ neighbor gene locations were used to compute binding site location, and the
 signature was used to verify computed locations and to identify the strand of
 the binding site.
 
+** Exporting as csv
+At the end, the TF locus tags, TF names, their binding sites were exported as a
+comma-delimited file names =mtbreglist.csv=.
