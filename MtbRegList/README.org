@@ -1,6 +1,6 @@
 * MtbRegList
 
-MtbRegList is a database containing gene expression and regulation data in
+[[http://mtbreglist.genap.ca/MtbRegList/][MtbRegList]] is a database containing gene expression and regulation data in
 /M. tuberculosis/. The python script in this repository reads the tab-delimited
 text file exported from MtbRegList, filters transcription factor binding site
 records and reconstructs the binding site sequences using /M. tuberculosis/
