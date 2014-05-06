@@ -14,9 +14,28 @@ generates a comma-separated file containing
 - site strand
 - site sequence
 
+The file =mtbreglist_sample.csv= contains a small subset of the data. To create the whole data set,
+follow the steps described in the following section.
+
 * Getting and cleaning data
+This section describes the steps that were followed to reorganize the data to
+generate the file in the format described above.
 
 ** Exporting MtbRegList results
+First, the data were exported from [[http://mtbreglist.genap.ca/MtbRegList/][MtbRegList]] by following steps given in
+"Exporting DNA motifs" section [[http://mtbreglist.genap.ca/MtbRegList/www/export.php][here]]. Annotated motifs were exported by selecting
+the =DNA Motif (Instance)= as the motif search type and using the default
+settings for the rest. Search results were saved in tab-delimited text file
+(using the link at the bottom of the page) for further processing.
+
+** Fixing locus tags
+/M. tuberculosis/ has locus tags in format =Rv\d+=. However, for some reason,
+some of the locus tags in MtbRegList results file don't match with any gene in
+[[http://www.ncbi.nlm.nih.gov/nuccore/NC_000962][NCBI RefSeq record]]. It seems that some locus tags (RNA coding genes) have been
+updated at some point in NCBI RefSeq database. These locus tags in MtbRegList
+result file have been replaced with ones in the genbank file if start and end
+positions match. The genomic locations for old locus tags can be found at
+http://tuberculist.epfl.ch/ by searching the locus tag. See script for details.
 
 
 

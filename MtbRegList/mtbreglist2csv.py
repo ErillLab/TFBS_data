@@ -34,7 +34,7 @@ def get_gene(genome_record, locus_tag):
     return head(genes)
 
 def repair_mtb_locus_tags(mtb_export_file):
-    """Mycobacterium tuberculosis have locus tags in format (Rv\d+). However,
+    """Mycobacterium tuberculosis has locus tags in format (Rv\d+). However,
     for some reason, some of the locus tags in MtbRegList export don't match
     with any gene in the NCBI genome record. It seems that some locus tags (RNA
     coding genes) have been updated at some point in NCBI RefSeq database. These
