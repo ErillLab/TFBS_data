@@ -14,9 +14,6 @@ script generates a comma-separated file containing
 - site strand
 - site sequence
 
-The file =mtbreglist_head.csv= contains a small subset of the data. To create the whole data set,
-the script performs the steps described in the following section.
-
 * Getting and cleaning data
 This section describes the steps that were followed to reorganize the data to
 generate the file in the format described above.
