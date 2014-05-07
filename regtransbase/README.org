@@ -31,7 +31,7 @@ To reiterate, the script generates two CSV files,
 
 Note that the MySQL dump contains both experimentally verified (reported in
 literature using some experimental technique such as EMSA, DNAse footprinting,
-etc.) and predicted binding sites. On the other hand, as described in
+etc.) and predicted binding sites/regions. On the other hand, as described in
 [[http://regtransbase.lbl.gov/cgi-bin/regtransbase?page=help#howpwm][RegTransBase website]], the alignments have been created manually and they don't
 have any experimental evidence.
 
@@ -39,7 +39,7 @@ have any experimental evidence.
 
 Since we are interested in /only experimentally validated/ transcription factor
 binding sites, only the sites that have experimental evidence are included in
-the final collection. The step-by-step strategy for filtering binding sites with
+the final collection. Steps for filtering binding sites/regions with
 experimental evidence is as follows
 
 1. Extract binding regions having experimental evidence
