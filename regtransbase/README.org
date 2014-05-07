@@ -1,0 +1,99 @@
+* RegTransBase
+
+[[regtransbase.lbl.gov][RegTransBase]] ([[http://www.biomedcentral.com/1471-2164/14/213][Cipriano et al.]]) is a database of regulatory sequences and
+interactions in bacterial genomes. It consists of two modules:
+- database of regulatory interactions containing experimentally validated and
+  predicted interactions
+- manually curated database of transcription factor binding sites.
+
+These two modules, regulatory interactions obtained from literature and manually
+curated binding sites, are available on RegTransBase website, as MySQL dump and
+collection of fasta files, respectively.
+
+* Getting and cleaning RegTransBase data
+
+** Exporting MySQL dump and TFBS alignments as CSV files
+The script =regtransbase_to_csv.py= read MySQL dump of the database and creates
+a CSV file containing
+- genome accession number
+- TF
+- binding site start/end position
+- binding site sequence
+- description
+- PMID describing the binding site
+
+In addition to the MySQL dump, the script also reads the collection of TFBS
+alignments and exports them into a CSV file containing same fields.
+
+To reiterate, the script generates two CSV files,
+- =regtransbase_mysql.csv= from MySQL dump (~2600 binding regions) and
+- =regtransbase_fasta.csv= from alignments (~3750 binding sites).
+
+Note that the MySQL dump contains both experimentally verified (reported in
+literature using some experimental technique such as EMSA, DNAse footprinting,
+etc.) and predicted binding sites. On the other hand, as described in
+[[http://regtransbase.lbl.gov/cgi-bin/regtransbase?page=help#howpwm][RegTransBase website]], the alignments have been created manually and they don't
+have any experimental evidence.
+
+** Getting experimentally verified sites
+
+Since we are interested in /only experimentally validated/ transcription factor
+binding sites, only the sites that have experimental evidence are included in
+the final collection. The step-by-step strategy for filtering binding sites with
+experimental evidence is as follows
+
+1. Extract binding regions having experimental evidence
+2. Extract predicted or manually curated binding sites
+3. Include the predicted or manually curated binding site in the final
+   collection if and only if the binding site is in one of the larger regions
+   that have experimental evidence.
+
+*** Extracting experimental evidences
+
+As mentioned before, the MySQL dump contains both experimentally verified
+binding regions (i.e. not the specific binding site but the region that the TF
+binds /somewhere/ on it) and the predicted binding sites.
+
+The =description= field on the CSV file (originally =name= field on =sites=
+table in the MySQL database) has a short description of the binding site which
+is useful to determine whether a binding site/region is predicted or
+experimentally verified in the associated manuscript. By analyzing the
+=description= field of all records, a set of keywords were identified and if a
+binding site/region description has any of these keywords in it, the binding
+site/region was considered as experimentally verified, otherwise
+predicted. Since most of the experiments are either EMSA or DNAse footprinting,
+the keywords are related to these experiments. Specifically, the keywords are
+
+#+begin_src python
+experimental_keywords = ["retarded",
+                         "protected",
+                         "footprint",
+                         "bound by",
+                         "shifted",
+                         "binding fragment",
+                         # same words with typos :/
+                         "retaded", "retarted", "retrarded",
+                         "reatrded", "retareded", "retatrded",
+                         "footrprint", "footoprint"]
+#+end_src
+
+
+*** Identifying binding sites with experimental evidence
+
+Finally, the predicted binding sites in MySQL dump and the manually curated
+binding sites in the provided alignments were checked if they can be associated
+with binding regions that has experimental evidence. A predicted binding site
+was included in the final collection if there is experimental evidence of the
+same TF binding to the region that contains the binding site in question.
+
+*** 
+Python functions performing these steps can be found in
+=regtransbase_only_experimental.py=. The script reads CSV files generated from
+MySQL dump and TFBS alignments, extracts experimentally verified binding
+regions, identifies binding sites that can be linked to a experimentally
+verified binding region.
+
+Out of ~3750 manually curated binding sites in alignments and ~600 predicted
+binding site in MySQL dump, only 86 were found to have experimental
+evidence. Those sites are given in =sites_with_exp_evidence.csv= file.
+
