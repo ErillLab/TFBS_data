@@ -34,6 +34,21 @@ file having following fields
 | alternative_database_id | original id used in the source database             |
 |-------------------------+-----------------------------------------------------|
 
+The site location is 0 indexed. Start index is inclusive and end index is
+exclusive. For each record,
+
+#+begin_src python
+if site_strand == +1:
+  site_sequence = genome_sequence[start:end]
+else:
+  site_sequence = reverse_complement(genome_sequence[start:end])
+#+end_src
+
+Left and right flanking regions are 100 bp sequences on both ends of the
+site. When they are concatenated with the site (i.e =left_flanking +
+site_sequence + right_flanking=), joined sequence should be present in either
+strand of the genome.
+
 
 The csv files (one from each database) is merged into =tfbs_data_merged.tsv=
 (see =to_my_format.py=). The RegTransBase is not included in the merged file as
