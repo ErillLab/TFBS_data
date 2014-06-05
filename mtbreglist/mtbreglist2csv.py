@@ -59,7 +59,7 @@ def repair_mtb_locus_tags(mtb_export_file):
         all_text = all_text.replace(old, new)
     with open(mtb_export_file, 'w') as f:
         f.write(all_text)
-    
+
 def reverse_complement(seq):
     """Reverse complement of a sequence"""
     return Seq(seq).reverse_complement().tostring()
@@ -67,11 +67,10 @@ def reverse_complement(seq):
 def sequence_match(exact_seq, ambiguous_seq):
     """Check if the given exact sequence and ambiguous one agree"""
     return all(eb == ab if ab in "ACTG" else True
-               for (eb,ab) in zip(exact_seq, ambiguous_seq))
-
+               for (eb, ab) in zip(exact_seq, ambiguous_seq))
 
 def binding_site_loc(genome_record, fga_locus_tag, fgb_locus_tag,
-                         dist5, dist3):
+                     dist5, dist3):
     """Given flanking gene(s), 5' and 3' distances to these genes, find the
     location of the binding site """
     # Get the location of the genes
@@ -121,15 +120,15 @@ def identify_binding_site(genome_record, df_row):
     assert strand in ['+', '-'], "Invalid strand"
     ambiguous_seq = parse_signature(df_row['Signature'])
     m = re.match(r"ir[PQDT]_(\w+)_(\w+)", df_row['Genomic region'])
-    if m: # contains two locus tags and the binding site is between these two genes
+    if m: # contains two locus tags and the binding site is between these two
+          # genes
         locus_tag_a, locus_tag_b = m.groups()
-        start,end = binding_site_loc(genome_record, locus_tag_a, locus_tag_b,
-                                     dist_5, dist_3)
-        
+        start, end = binding_site_loc(genome_record, locus_tag_a, locus_tag_b,
+                                      dist_5, dist_3)
     else: # contains only one locus tag
         locus_tag = df_row['Genomic region']
-        start,end = binding_site_loc_one(genome_record, locus_tag,
-                                         dist_5, dist_3)
+        start, end = binding_site_loc_one(genome_record, locus_tag,
+                                          dist_5, dist_3)
     # Extract the binding site
     site = genome_record.seq[start:end].tostring()
     if strand == '-':
@@ -138,7 +137,7 @@ def identify_binding_site(genome_record, df_row):
     assert sequence_match(site, ambiguous_seq), "Sequences don't match"
     print start, end, strand, site
     return pd.Series({'start': start, 'end': end, 'strand': strand, 'site':site})
-    
+
 def read_mtbreglist(export_file="results.txt"):
     """Given the tab delimited text file exported from MtbRegList database, read
     the data that contains promoters, transcription factor binding sites and
@@ -168,7 +167,9 @@ def read_mtbreglist(export_file="results.txt"):
                      'start',
                      'end',
                      'strand',
-                     'site']
+                     'site',
+                     'Trx_Impact',
+                     'Reference']
     df.to_csv("mtbreglist.csv", sep=",", cols=cols_to_write, index=False)
     #df.head().to_csv("mtbreglist_head.csv", sep=",", cols=cols_to_write, index=False)
     return df
