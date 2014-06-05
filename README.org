@@ -5,12 +5,12 @@ binding site data from a collection of gene regulation databases.
 
 This repository contains data from following databases.
 
-- [[collectf.umbc.edu][CollecTF]] (prokaryotic-wide)
+- [[http://collectf.umbc.edu][CollecTF]] (prokaryotic-wide)
 - [[http://mtbreglist.genap.ca/MtbRegList/www/index.php][MtbRegList]] (/Mycobacterium tuberculosis/)
-- [[regtransbase.lbl.gov][RegTransBase]] (prokaryotic-wide)
-- [[regulondb.ccg.unam.mx][RegulonDB]] (/Escherichia coli/) - TODO
+- [[http://regtransbase.lbl.gov][RegTransBase]] (prokaryotic-wide)
+- [[http://regulondb.ccg.unam.mx][RegulonDB]] (/Escherichia coli/) - TODO
 - [[http://dbtbs.hgc.jp/][DBTBS]] (/Bacillus subtilis/) - TODO
-- [[coryneregnet.de][CoryneRegNet]] (/Corynebacterium/ species) - TODO
+- [[http://coryneregnet.de][CoryneRegNet]] (/Corynebacterium/ species) - TODO
 
 In addition to database-specific csv/tsv files, the data is merged into one tsv
 file having following fields
