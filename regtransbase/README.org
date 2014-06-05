@@ -13,7 +13,7 @@ collection of fasta files, respectively.
 * Getting and cleaning RegTransBase data
 
 ** Exporting MySQL dump and TFBS alignments as CSV files
-The script =regtransbase_to_csv.py= read MySQL dump of the database and creates
+The script =regtransbase_to_csv.py= reads MySQL dump of the database and creates
 a CSV file containing
 - genome accession number
 - TF
@@ -86,7 +86,6 @@ with binding regions that has experimental evidence. A predicted binding site
 was included in the final collection if there is experimental evidence of the
 same TF binding to the region that contains the binding site in question.
 
-*** 
 Python functions performing these steps can be found in
 =regtransbase_only_experimental.py=. The script reads CSV files generated from
 MySQL dump and TFBS alignments, extracts experimentally verified binding
@@ -96,4 +95,3 @@ verified binding region.
 Out of ~3750 manually curated binding sites in alignments and ~600 predicted
 binding site in MySQL dump, only 86 were found to have experimental
 evidence. Those sites are given in =sites_with_exp_evidence.csv= file.
-

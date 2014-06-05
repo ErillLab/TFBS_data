@@ -112,6 +112,8 @@ def get_exp_verified_sites_only():
     cols = ['genome_accession', 'TF', 'start_pos', 'end_pos', 'strand',
             'sequence', 'description', 'pmid']
     concat_df = pd.concat([sites_with_evidence, sites_with_evidence_2])
+    #pmids as integers
+    concat_df.pmid = concat_df.pmid.astype(int)
     concat_df = concat_df[cols]
     concat_df.sort(cols, inplace=True)
     concat_df.to_csv("sites_with_exp_evidence.csv", index=False)
