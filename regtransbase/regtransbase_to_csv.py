@@ -1,6 +1,20 @@
+"""
+This module is used to generate csv files from RegTransBase mysqldump and TFBS
+alignments, available at RegTransBase website.
+
+To generate csv file from mysqldump,
+
+  con = connect_db(host, db, user, passwd)
+  mysqldump_to_csv(con)
+
+To generate csv file from TFBS alignments
+
+  fasta_to_csv(alignment_dir)
+
+"""
+
 import MySQLdb
 import pandas as pd
-import numpy as np
 import re
 import os
 
@@ -53,6 +67,9 @@ def read_sites(con):
                        right_index=True)
     # exclude rows with no genome_acc, site location or strand info
     site_df = site_df.dropna()
+    # site start and end positions are integers
+    site_df.start_pos = site_df.start_pos.astype(int)
+    site_df.end_pos = site_df.end_pos.astype(int)
     return site_df
 
 def read_genomes(con):
@@ -90,7 +107,7 @@ def read_experiments(con):
     exp_df = pd.merge(exp_df, exp_type_df, on='exp_guid')
     # drop unnecessary columns
     exp_df = exp_df.drop(['pkg_guid', 'last_update'], axis=1)
-    return groups
+    return exp_df
 
 def mysqldump_to_csv(con):
     """Read database tables to dataframes"""
@@ -108,7 +125,7 @@ def mysqldump_to_csv(con):
     # sort by genome_accession
     site_df = site_df.sort(['genome_accession', 'TF'])
     site_df.index = range(1, len(site_df)+1)
-    
+
     # Write to csv
     cols_to_write = ['genome_accession',
                      'TF',
@@ -117,8 +134,7 @@ def mysqldump_to_csv(con):
                      'strand',
                      'sequence',
                      'description',
-                     'pmid',
-                     ]
+                     'pmid']
 
     site_df.to_csv('regtransbase_mysql.csv', sep=',', cols=cols_to_write, index=False)
     return site_df
@@ -140,7 +156,7 @@ def parse_fasta_seq((desc, seq)):
     if start_pos > end_pos:
         start_pos, end_pos = end_pos, start_pos
         strand = -1
-    
+
     return {'genome_accession': genome_acc,
             'start_pos': start_pos,
             'end_pos': end_pos,
@@ -152,7 +168,7 @@ def fasta_to_csv(fasta_dir):
     """Given the directory containing fasta files of binding site alignments,
     parse the description lines and write the sites to the csv file"""
     fasta_files = [f for f in os.listdir(fasta_dir) if f.endswith('.fasta')]
-    dfs = [] # data frames 
+    dfs = [] # data frames
     for fasta_file in fasta_files:
         with open(os.path.join(fasta_dir, fasta_file), 'r') as f:
             lines = map(lambda l: l.strip(), f.readlines())
@@ -164,7 +180,12 @@ def fasta_to_csv(fasta_dir):
         dfs.append(df)
 
     concatenated = pd.concat(dfs)
-    
+
+    #start and end positions are integers
+    concatenated.start_pos = concatenated.start_pos.astype(int)
+    concatenated.end_pos = concatenated.end_pos.astype(int)
+    concatenated.strand = concatenated.strand.astype(int)
+
     cols_to_write = ['genome_accession',
                      'TF',
                      'start_pos',
@@ -172,4 +193,3 @@ def fasta_to_csv(fasta_dir):
                      'strand',
                      'sequence']
     concatenated.to_csv('regtransbase_fasta.csv', sep=',', cols=cols_to_write, index=False)
-    
