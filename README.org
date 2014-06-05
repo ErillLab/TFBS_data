@@ -46,8 +46,8 @@ else:
 
 Left and right flanking regions are 100 bp sequences on both ends of the
 site. When they are concatenated with the site (i.e =left_flanking +
-site_sequence + right_flanking=), joined sequence should be present in either
-strand of the genome.
+site_sequence + right_flanking=), the joined sequence should be present in
+either strand of the genome.
 
 ** Concatenated data
 
