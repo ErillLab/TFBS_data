@@ -2,3 +2,40 @@
 
 Collection of Python scripts for getting and cleaning transcription factor
 binding site data from a collection of gene regulation databases.
+
+This repository contains data from following databases.
+
+- [[collectf.umbc.edu][CollecTF]] (prokaryotic-wide)
+- [[http://mtbreglist.genap.ca/MtbRegList/www/index.php][MtbRegList]] (/Mycobacterium tuberculosis/)
+- [[regtransbase.lbl.gov][RegTransBase]] (prokaryotic-wide)
+- [[regulondb.ccg.unam.mx][RegulonDB]] (/Escherichia coli/) - TODO
+- [[http://dbtbs.hgc.jp/][DBTBS]] (/Bacillus subtilis/) - TODO
+- [[coryneregnet.de][CoryneRegNet]] (/Corynebacterium/ species) - TODO
+
+In addition to database-specific csv/tsv files, the data is merged into one tsv
+file having following fields
+
+|---------------------------+-----------------------------------------------------|
+| =genome_accession=        | NCBI RefSeq genome accession number                 |
+| =TF=                      | transcription factor                                |
+| =TF_accession=            | transcription factor accession number               |
+| =site_start=              | site start position (0-indexed, inclusive)          |
+| =site_end=                | site end position (0-indexed, exclusive)            |
+| =site_strand=             | site strand, {+, -}                                 |
+| =left_flanking=           | left flanking region of the site (100bp)            |
+| =site_sequence=           | site sequence [ACTG]+                               |
+| =right_flanking=          | right flanking region of the site (100bp)           |
+| =regulated_operon=        | the regulated genes/operon (as originally reported) |
+| =mode=                    | TF mode {activator, repressor, dual, undefined}     |
+| =evidence=                | list of techniques or PMIDs                         |
+| =database=                | the source of the site                              |
+| =alternative_database_id= | original id used in the source database             |
+|---------------------------+-----------------------------------------------------|
+
+The csv files (one from each database) is merged into =tfbs_data_merged.tsv=
+(see =to_my_format.py=). The RegTransBase is not included in the merged file as
+most of its sites don't have any associated experimental evidence (see
+=regtransbase= readme file).
+
+
+
