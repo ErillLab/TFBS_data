@@ -16,6 +16,8 @@ In addition to database-specific csv/tsv files, the data is merged into one tsv
 file having following fields
 
 |---------------------------+-----------------------------------------------------|
+| column                    | description                                         |
+|---------------------------+-----------------------------------------------------|
 | =genome_accession=        | NCBI RefSeq genome accession number                 |
 | =TF=                      | transcription factor                                |
 | =TF_accession=            | transcription factor accession number               |
@@ -31,6 +33,7 @@ file having following fields
 | =database=                | the source of the site                              |
 | =alternative_database_id= | original id used in the source database             |
 |---------------------------+-----------------------------------------------------|
+
 
 The csv files (one from each database) is merged into =tfbs_data_merged.tsv=
 (see =to_my_format.py=). The RegTransBase is not included in the merged file as
