@@ -58,6 +58,18 @@ def get_sequence(genome_seq, start, end, strand):
         site_seq = reverse_complement(site_seq)
     return site_seq
 
+
+def from_collectf_mode(mode):
+    """Map CollecTF TF mode to my format"""
+    if pd.isnull(mode):
+        return 'undefined'
+        
+    modes = {'ACT': 'activator',
+             'REP': 'repressor',
+             'DUAL': 'dual',
+             'N/A': 'undefined'}
+    return modes[mode]
+
 def from_collectf_loc(start, end, strand):
     """Convert collectf location format to my format (0 indexed)"""
     return (start, end+1)
@@ -70,6 +82,8 @@ def from_collectf(row, genomes):
     my_start, my_end = from_collectf_loc(start, end, strand)
     genome_seq = genome.seq.tostring()
     site_seq = get_sequence(genome_seq, my_start, my_end, strand)
+    print row.sequence, site_seq, strand
+    
     assert site_seq == row.sequence
     left_flanking = get_sequence(genome_seq, my_start-100, my_start, strand)
     right_flanking = get_sequence(genome_seq, my_end, my_end+100, strand)
@@ -85,7 +99,7 @@ def from_collectf(row, genomes):
                           site_sequence=site_seq,
                           right_flanking=right_flanking,
                           regulated_operon=row['regulated genes (locus_tags)'],
-                          mode='',
+                          mode=from_collectf_mode(row['mode']),
                           evidence=row.experimental_evidence,
                           database='CollecTF',
                           alternative_database_id=''))
