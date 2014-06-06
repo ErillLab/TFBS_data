@@ -73,6 +73,8 @@ def from_collectf(row, genomes):
     assert site_seq == row.sequence
     left_flanking = get_sequence(genome_seq, my_start-100, my_start, strand)
     right_flanking = get_sequence(genome_seq, my_end, my_end+100, strand)
+    if strand == -1:
+        left_flanking, right_flanking = right_flanking, left_flanking
     return pd.Series(dict(genome_accession=row.genome_accession,
                           TF=row.TF,
                           TF_accession=row.TF_accession,
@@ -124,6 +126,8 @@ def from_mtbreglist(row, genome):
         assert site_seq == row['site']
     left_flanking = get_sequence(genome_seq, my_start-100, my_start, strand)
     right_flanking = get_sequence(genome_seq, my_end, my_end+100, strand)
+    if strand == -1:
+        left_flanking, right_flanking = right_flanking, left_flanking
     return pd.Series(dict(genome_accession=row['Genome'],
                           TF=gene,
                           TF_accession=acc,

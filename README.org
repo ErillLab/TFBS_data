@@ -51,11 +51,8 @@ either strand of the genome.
 
 ** Concatenated data
 
-
 The csv files (one from each database) are concatenated into
 =tfbs_data_merged.tsv= (see =to_my_format.py=). The RegTransBase is not included
 in the merged file as most of its sites don't have any associated experimental
 evidence (see =regtransbase= readme file).
-
-
 
