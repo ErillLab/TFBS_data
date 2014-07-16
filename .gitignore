@@ -3,4 +3,5 @@
 *.gb
 *.gbk
 *.fna
+*.pyc
 *~
