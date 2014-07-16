@@ -79,5 +79,20 @@ def main():
                         #assert start_ref == start and stop_ref == stop and strand_ref == strand
                         ufr,dfr = find_flanking_regions(start,stop,strand,site,fna_filename) if strand else (None,None)
                         #print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,gene,mode,db_name,pubmedIDs,sep=',')
-                        print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,interpreted_gene,interpreted_mode,db_name,pubmedIDs,sep='\t',file=outfile)
+                        #print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,interpreted_gene,interpreted_mode,db_name,pubmedIDs,sep='\t',file=outfile)
+                        outline = template.substitute(genome_accession=versioned_accession,
+                                          TF=tf,
+                                          TF_accession=tf_accession,
+                                          site_start=start,#gbk_start,
+                                          site_end=stop,#gbk_stop,
+                                          site_strand=strand,
+                                          left_flanking=ufr,
+                                          site_sequence=site,
+                                          right_flanking=dfr, 
+                                          regulated_operon=interpreted_gene,
+                                          mode=interpreted_mode,
+                                          evidence=pubmedIDs,
+                                          database=db_name,
+                                          alternative_database_id="-")
+                        print(outline,end="\n",file=outfile)
     outfile.close()

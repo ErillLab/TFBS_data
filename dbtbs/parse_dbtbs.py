@@ -72,9 +72,24 @@ def main():
             ufr,dfr = find_flanking_regions(start,stop,strand,site,fna_filename) if strand else (None,None)
             print("SUCCESS | ",versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,
                   interpreted_gene,interpreted_mode,db_name,evidence,sep='\t')
-            print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,
-                  interpreted_gene,interpreted_mode,db_name,evidence,sep='\t',file=tsv)
+            # print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,
+            #       interpreted_gene,interpreted_mode,db_name,evidence,sep='\t',file=tsv)
             # print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,
             #       strand,gene,mode,db_name,evidence,alternate_db_id,sep=',',file=csv)
+            outline = template.substitute(genome_accession=versioned_accession,
+                                          TF=tf,
+                                          TF_accession=tf_accession,
+                                          site_start=start,#gbk_start,
+                                          site_end=stop,#gbk_stop,
+                                          site_strand=strand,
+                                          left_flanking=ufr,
+                                          site_sequence=site,
+                                          right_flanking=dfr, 
+                                          regulated_operon=interpreted_gene,
+                                          mode=interpreted_mode,
+                                          evidence=evidence,
+                                          database=db_name,
+                                          alternative_database_id="-")
+            print(outline,end="\n",file=tsv)
             
     tsv.close()

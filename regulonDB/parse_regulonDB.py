@@ -1,3 +1,4 @@
+from __future__ import print_function
 import csv,re
 from utils import get_ecoli_genome,verbose_gen,wc
 from parse_tf_set import gene_name_from_tf
@@ -52,7 +53,7 @@ def from_their_index(their_start,their_stop,strand):
         their_stop = their_start + len(upper_site)
         my_start,my_stop = G - their_stop + 1,G - their_start + 1
     else:
-        print "didn't recognize strand:",strand 
+        print("didn't recognize strand:",strand)
     return my_start,my_stop
 
 def to_gbk_index(my_start,my_stop,strand):
@@ -102,19 +103,19 @@ def main():
             elif len(matches) > 1:
                 raw_matches = find_site(raw_site.upper(),fna_fname,return_all=True)
                 if len(raw_matches) > 1:
-                    print "WARNING | too many raw matches:",raw_matches
-                    print "compare to:",start,stop
+                    print("WARNING | too many raw matches:",raw_matches)
+                    print("compare to:",start,stop)
                     raw_matches = [sorted(raw_matches,key=lambda(x,y,z):abs(x-start))[0]]
-                    print "chose:",raw_matches
+                    print("chose:",raw_matches)
                     # fall through to next if block since len(raw_matches) == 1 now...
                 if len(raw_matches) == 1:
                     raw_start,raw_stop,raw_strand = raw_matches[0]
                     start,stop,site_strand = find(lambda (x,y,z): (raw_start <= x and
                                                                    y <= raw_stop and
                                                                    z == raw_strand),matches)
-                    print "found unique match by raw matching"
+                    print("found unique match by raw matching")
                 else:
-                    print "FAILURE | no raw matches"
+                    print("FAILURE | no raw matches")
                     continue
             else:
                 print("FAILURE | no matches")
@@ -125,19 +126,19 @@ def main():
                 tf_dict[tf_name] = protein_accessions_from_gene_name(decap(line[tf_name]),gbk_fname)
             tf_accession = tf_dict[tf_name]
             outline = template.substitute(genome_accession="NC_000913.2", # Build v. 2
-                                          tf_name = line[tf_name],
-                                          tf_accession=tf_accession,
-                                          start_pos=start,#gbk_start,
-                                          stop_pos=stop,#gbk_stop,
+                                          TF = line[tf_name],
+                                          TF_accession=tf_accession,
+                                          site_start=start,#gbk_start,
+                                          site_end=stop,#gbk_stop,
                                           site_strand=site_strand,
-                                          ufr=ufr,
-                                          site=upper_site,
-                                          dfr=dfr, 
-                                          operon=line[regulandum],
+                                          left_flanking=ufr,
+                                          site_sequence=upper_site,
+                                          right_flanking=dfr, 
+                                          regulated_operon=line[regulandum],
                                           mode=interpret_mode(line[mode]),
                                           evidence=line[evidence].replace(',',';'),
-                                          db_name="regulonDB",
-                                          alternate_db_id=line[bs_id])
-            print "SUCCESS"
-            outfile.write(outline)    
-    print "finished"
+                                          database="regulonDB",
+                                          alternative_database_id=line[bs_id])
+            print("SUCCESS")
+            print(outline,end="\n",file=outfile)
+    print("finished")
