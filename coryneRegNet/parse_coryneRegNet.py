@@ -15,9 +15,16 @@ evidence_index = header_fields.index("Evidence")
 seq_index = header_fields.index("Binding motif")
 pubmedIDs_index =header_fields.index("PubmedIDs")
 
+def interpret_mode(mode):
+    if mode == 'A':
+        return "activator"
+    elif mode == 'R':
+        return "repressor"
+    else:
+        return "undefined"
 
 def main():
-    outfile = open("coryneRegNet.csv",'w')
+    outfile = open("coryneRegNet.tsv",'w')
     print(header.strip(),file=outfile) # get rid of trailing newline
     for entry in os.listdir(data_dir):
         sub_dir = os.path.join(data_dir,entry)
@@ -52,7 +59,6 @@ def main():
                     exec_string = "%s = line[%s_index]" % (field,field)
                     #print(exec_string)
                     exec(exec_string)
-                operon = '-'
                 db_name = "coryneRegNet"
                 if not evidence == "experimental":
                     continue
@@ -62,6 +68,8 @@ def main():
                 tf_accession = d[cds]
                 if re.match('[acgtACGT]',seq):
                     print("found seq:",seq)
+                    interpreted_mode = interpret_mode(mode)
+                    interpreted_gene = gene if gene else '-'
                     for raw_site in seq.split(';'): # line contains multiple sites...
                         site = raw_site.upper()
                         #start_ref,stop_ref,strand_ref = find_site_ref(site,fna_filename)
@@ -70,6 +78,6 @@ def main():
                             continue # ignore unlocatable sites or multiple occurrences
                         #assert start_ref == start and stop_ref == stop and strand_ref == strand
                         ufr,dfr = find_flanking_regions(start,stop,strand,site,fna_filename) if strand else (None,None)
-                        print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,gene,mode,db_name,pubmedIDs,sep=',')
-                        print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,gene,mode,db_name,pubmedIDs,sep=',',file=outfile)
+                        #print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,gene,mode,db_name,pubmedIDs,sep=',')
+                        print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,interpreted_gene,interpreted_mode,db_name,pubmedIDs,sep='\t',file=outfile)
     outfile.close()
