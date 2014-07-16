@@ -72,7 +72,7 @@ def from_collectf_mode(mode):
 
 def from_collectf_loc(start, end, strand):
     """Convert collectf location format to my format (0 indexed)"""
-    return (start, end+1)
+    return (start-1, end)
 
 def from_collectf(row, genomes):
     """Convert every row of data from CollecTF csv to the format described at
@@ -80,11 +80,11 @@ def from_collectf(row, genomes):
     genome = genomes[row.genome_accession]
     start, end, strand = row.site_start, row.site_end, row.site_strand
     my_start, my_end = from_collectf_loc(start, end, strand)
+    print start, end, my_start, my_end
     genome_seq = genome.seq.tostring()
     site_seq = get_sequence(genome_seq, my_start, my_end, strand)
     print row.sequence, site_seq, strand
-    
-    assert site_seq == row.sequence
+    assert site_seq == row.sequence, 'site location error'
     left_flanking = get_sequence(genome_seq, my_start-100, my_start, strand)
     right_flanking = get_sequence(genome_seq, my_end, my_end+100, strand)
     if strand == -1:
@@ -210,11 +210,14 @@ def regtransbase_reformat(regtransbase_file):
 
 def merge_all():
     """Merge all data into one csv."""
+    
     mtbreglist_file = 'mtbreglist/mtbreglist.csv'
     mtbreglist_df = mtbreglist_reformat(mtbreglist_file)
 
     collectf_file = 'collectf/collectfdb.tsv'
     collectf_df = collectf_reformat(collectf_file)
+
+
 
     df = pd.concat([collectf_df, mtbreglist_df])
     cols= ['genome_accession',
