@@ -217,11 +217,10 @@ def merge_all():
     collectf_file = 'collectf/collectfdb.tsv'
     collectf_df = collectf_reformat(collectf_file)
 
-
-
     df = pd.concat([collectf_df, mtbreglist_df])
     cols= ['genome_accession',
            'TF',
+           'TF_accession',
            'site_start',
            'site_end',
            'site_strand',
