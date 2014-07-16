@@ -1,4 +1,6 @@
 *.fasta
 *.mast
 *.gb
+*.gbk
+*.fna
 *~
