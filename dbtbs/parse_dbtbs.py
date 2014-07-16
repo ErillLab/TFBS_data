@@ -13,14 +13,25 @@ gbk_filename = 'genome_data/Bacillus_subtilis_168_uid57675/NC_000964.gbk'
 relevant_fields = "tfac gene regulation sequence".split()
 #printable_fields ="tfac_text gene_text sigma_text regulation_text site".split()
 printable_fields ="tfac_text gene_text regulation_text site".split()
-    
+
+def interpret_mode(mode):
+    if mode == 'Positive':
+        return "activator"
+    elif mode == 'Negative':
+        return "repressor"
+    elif mode == "Pos/Neg":
+        return "dual"
+    else:
+        print("WARNING | didn't recognize regulation mode:",mode)
+        return "undefined"
+        
 def main():
     tree = ET.parse("dbtbs.xml")
     root = tree.getroot()
-    csv = open("dbtbs.csv","w")
+    tsv = open("dbtbs.tsv","w")
     tf_accession_dict = {}
     versioned_accession = versioned_accession_from_fna(fna_filename)
-    print(header.strip(),sep=',',file=csv)
+    print(header.strip(),sep=',',file=tsv)
     for i,promoter in enumerate(root.iter('promoter')):
         for field in relevant_fields:
             exec_string1 = "%s = promoter.find('%s')" % (field,field)
@@ -45,16 +56,11 @@ def main():
         print("gene:",gene)
         gene = gene_text
         print("gene:",gene)
-        if regulation_text == "Positive":
-            mode = "A"
-        elif regulation_text == "Negative":
-            mode = "R"
-        else:
-            print("WARNING | unrecognized regulation mode:",regulation_text)
-            mode = regulation_text
         db_name = "tbdbs"
         alternate_db_id = ""
         evidence = "[" + ";".join([elm.text for elm in (promoter.find('reference').iter())][1:]) + "]"
+        interpreted_gene = gene
+        interpreted_mode = interpret_mode(regulation_text)
         for site in sites:
             if len(site) < 7:
                 print("FAILURE | site too short at:",len(site))
@@ -64,9 +70,11 @@ def main():
                 print("FAILURE | multiple or no matches")
                 continue
             ufr,dfr = find_flanking_regions(start,stop,strand,site,fna_filename) if strand else (None,None)
-            print("SUCCESS | ",versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,
-                  strand,gene,mode,db_name,evidence,sep=',')
-            print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,
-                  strand,gene,mode,db_name,evidence,alternate_db_id,sep=',',file=csv)
-            #print(",".join(eval(field_name) for field_name in printable_fields),file=csv)
-    csv.close()
+            print("SUCCESS | ",versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,
+                  interpreted_gene,interpreted_mode,db_name,evidence,sep='\t')
+            print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,strand,
+                  interpreted_gene,interpreted_mode,db_name,evidence,sep='\t',file=tsv)
+            # print(versioned_accession,tf,tf_accession,ufr,site,dfr,start,stop,
+            #       strand,gene,mode,db_name,evidence,alternate_db_id,sep=',',file=csv)
+            
+    tsv.close()
