@@ -10,8 +10,21 @@ import ftputil
 host = ftputil.FTPHost('ftp.ncbi.nlm.nih.gov', 'anonymous', 'password')
 host.chdir('/genomes/Bacteria/')
 
-template = Template("$genome_accession, $tf_name, $tf_accession, $ufr, $site, $dfr, $start_pos, $stop_pos, $operon, $mode, $db_name, $evidence, $alternate_db_id\n")
-header = "genome_accession, TF, TF_accession, left_flanking, site_sequence, right_flanking, site_start, site_stop, site_strand, regulated_operon, mode, database, evidence, alternative_database_id"
+template = Template("$genome_accession\t$tf_name\t$tf_accession\t$ufr\t$site\t$dfr\t$start_pos\t$stop_pos\t$site_strand\t$operon\t$mode\t$db_name\t$evidence\t$alternate_db_id\n")
+header = "\t".join(["genome_accession",
+                    "TF",
+                    "TF_accession",
+                    "left_flanking",
+                    "site_sequence",
+                    "right_flanking",
+                    "site_start",
+                    "site_stop",
+                    "site_strand",
+                    "regulated_operon",
+                    "mode",
+                    "database",
+                    "evidence",
+                    "alternative_database_id"])
 
 
 def dl_gbk(species_name):

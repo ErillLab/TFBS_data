@@ -61,10 +61,19 @@ def to_gbk_index(my_start,my_stop,strand):
     elif strand == "reverse":
         return my_start,my_stop
 
+def interpret_mode(mode):
+    mode_dict =  {"+":"activator",
+                  "-":"repressor",
+                  "+-":"dual"}
+    if mode in mode_dict:
+        return mode_dict[mode]
+    else:
+        return "undefined"
+
 def main():
     tf_dict = {}
-    with open("regulonDB.csv",'w') as outfile:
-        outfile.write(header)
+    with open("regulonDB.tsv",'w') as outfile:
+        outfile.write(header + "\n")
         for line in verbose_gen(lines,modulus=100):
             #print line
             if line[0].startswith('#'):
@@ -118,16 +127,16 @@ def main():
             outline = template.substitute(genome_accession="NC_000913.2", # Build v. 2
                                           tf_name = line[tf_name],
                                           tf_accession=tf_accession,
-                                          ufr=ufr,
-                                          site=upper_site,
-                                          dfr=dfr,
                                           start_pos=start,#gbk_start,
                                           stop_pos=stop,#gbk_stop,
-                                          strand=site_strand,
+                                          site_strand=site_strand,
+                                          ufr=ufr,
+                                          site=upper_site,
+                                          dfr=dfr, 
                                           operon=line[regulandum],
-                                          mode=line[mode],
+                                          mode=interpret_mode(line[mode]),
+                                          evidence=line[evidence].replace(',',';'),
                                           db_name="regulonDB",
-                                          evidence=line[evidence],
                                           alternate_db_id=line[bs_id])
             print "SUCCESS"
             outfile.write(outline)    
