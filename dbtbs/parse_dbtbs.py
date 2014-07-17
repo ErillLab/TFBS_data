@@ -56,7 +56,7 @@ def main():
         print("gene:",gene)
         gene = gene_text
         print("gene:",gene)
-        db_name = "tbdbs"
+        db_name = "DBTBS"
         alternate_db_id = ""
         evidence = "[" + ";".join([elm.text for elm in (promoter.find('reference').iter())][1:]) + "]"
         interpreted_gene = gene
