@@ -229,6 +229,12 @@ def merge_all():
                     regulondb_df,
                     dbtbs_df])
 
+    # Some TF accesssions have version number (e.g. NP_389668.1) and some don't
+    # (e.g. NP_389668). Make them have the same format.
+    df['TF_accession'] = df.apply(lambda x: x['TF_accession'].split('.')[0],
+                                  axis=1)
+    
+
     # sort rows by TF, TF accesion, genome accession and start position
     df = df.sort(['TF', 'TF_accession', 'genome_accession', 'site_start'])
 
