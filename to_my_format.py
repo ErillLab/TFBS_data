@@ -208,16 +208,30 @@ def regtransbase_reformat(regtransbase_file):
     my_df = df.apply(from_regtransbase, axis=1, args=(genomes,))
     return my_df
 
+
 def merge_all():
     """Merge all data into one csv."""
-    
+
     mtbreglist_file = 'mtbreglist/mtbreglist.csv'
     mtbreglist_df = mtbreglist_reformat(mtbreglist_file)
 
     collectf_file = 'collectf/collectfdb.tsv'
     collectf_df = collectf_reformat(collectf_file)
 
-    df = pd.concat([collectf_df, mtbreglist_df])
+    regulondb_file = 'regulonDB/regulonDB.tsv'
+    regulondb_df = pd.read_csv(regulondb_file, sep='\t')
+
+    dbtbs_file = 'dbtbs/dbtbs.tsv'
+    dbtbs_df = pd.read_csv(dbtbs_file, sep='\t')
+
+    df = pd.concat([collectf_df,
+                    mtbreglist_df,
+                    regulondb_df,
+                    dbtbs_df])
+
+    # sort rows by TF, TF accesion, genome accession and start position
+    df = df.sort(['TF', 'TF_accession', 'genome_accession', 'site_start'])
+
     cols= ['genome_accession',
            'TF',
            'TF_accession',
