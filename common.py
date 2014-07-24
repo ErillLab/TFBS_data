@@ -113,7 +113,6 @@ def dl_fna(species_name):
                 host.download(fna_name,target_path)
                 return target_path
         except:
-            "something got fucked up!"
             continue
     print "Couldn't find fna for:",species_name
     return None
@@ -121,17 +120,49 @@ def dl_fna(species_name):
 def protein_accessions_from_gene_name(gene_name,gbk_fname):
     """Given a gene name and a gbk filename, return the protein accession"""
     print "Searching for:",gene_name,"in:",gbk_fname
+    trouble_makers = {"PgrR":"YjcZ",
+                      "RcdA":"Ybjk",
+                      "H-NS":"hns",
+                      "H-U":"hupA-hupB",
+                      "IHF":"ihfA-ihfB"}
+    if gene_name in trouble_makers:
+        gene_name = trouble_makers[gene_name]
+    subunits = []
+    if '-' in gene_name:
+        print "WARNING | detected subunits"
+        subunits = gene_name.split('-')
+        if all(len(subunit) > 3 for subunit in subunits):
+            print "recursively identifying subunits"
+            return ";".join(protein_accessions_from_gene_name(subunit,gbk_fname) for subunit in subunits)
+        print "WARNING | subunits weren't long enough, proceeding as usual"
+    match = re.match("([A-Z][a-z]+?)([A-Z]{2,})",gene_name) # does it end in a block of uppercase letters?
+    if match:
+        print match.groups()
+        operon,genes = match.groups()
+        print "WARNING | found trailing upper-case block in", gene_name,":",operon,genes
+        return ";".join(protein_accessions_from_gene_name(operon + gene,gbk_fname) for gene in genes)
     gbk = SeqIO.read(gbk_fname,'genbank')
     p_accs = []
     for feature in gbk.features:
         if 'gene' in feature.qualifiers and 'protein_id' in feature.qualifiers:
-            if gene_name in feature.qualifiers['gene']:
+            if gene_name.lower() in [name.lower() for name in feature.qualifiers['gene']]:
                 p_accs.append(feature.qualifiers['protein_id'][0])
     if not p_accs:
-        print "couldn't find:",gene_name
+        print "WARNING | couldn't find:",gene_name,"by searching gene names"
+        for feature in gbk.features:
+            if 'gene_synonym' in feature.qualifiers and 'protein_id' in feature.qualifiers:
+                synonyms = [syn.strip().lower() for entry in feature.qualifiers['gene_synonym']
+                            for syn in entry.split(';')]
+                #print synonyms
+                if gene_name.lower() in synonyms:
+                    p_accs.append(feature.qualifiers['protein_id'][0])
+        if p_accs:
+            print "WARNING | resorted to gene synoynms for:",gene_name
+    if not p_accs:
+        print "WARNING | no protein accession for:",gene_name
         return None
     if len(p_accs) > 1:
-        print "Warning, found %s entries for %s: %s" % (len(p_accs),gene_name,p_accs)
+        print "WARNING | found %s entries for %s: %s" % (len(p_accs),gene_name,p_accs)
     return p_accs[0]
 
 def protein_accessions_from_locus_tag(locus_tag,gbk_fname):

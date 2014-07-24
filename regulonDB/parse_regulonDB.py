@@ -83,20 +83,6 @@ def main():
             upper_site = filter(lambda c:c.isupper(),raw_site)
             if not upper_site:
                 continue
-            # start = int(line[left_pos])
-            # stop = int(line[right_pos])
-            # my_start,my_stop = from_their_index(start,stop,line[strand])
-            # gbk_start,gbk_stop = to_gbk_index(my_start,my_stop,line[strand])
-            # if line[strand] == 'forward':
-            #     genome = ecoli_v2
-            #     site_strand = 1
-            # elif line[strand] == 'reverse':
-            #     genome = rev_ecoli_v2
-            #     site_strand = -1
-            # assert upper_site == genome[my_start:my_stop]
-            # ufr = genome[my_start-100:my_start]
-            # dfr = genome[my_stop:my_stop+100]
-            #assert ufr+upper_site+dfr in genome (works,but slow)
             matches = find_site(upper_site,fna_fname,return_all=True)
             if len(matches) == 1:
                 start,stop,site_strand = matches[0]
@@ -122,9 +108,11 @@ def main():
                 continue
                 
             ufr,dfr = find_flanking_regions(start,stop,site_strand,upper_site,fna_fname) if site_strand else (None,None)
-            if not tf_name in tf_dict:
-                tf_dict[tf_name] = protein_accessions_from_gene_name(decap(line[tf_name]),gbk_fname)
-            tf_accession = tf_dict[tf_name]
+            tf = line[tf_name]
+            if not tf in tf_dict:
+                tf_dict[tf] = protein_accessions_from_gene_name(tf,gbk_fname)
+                print("assigned TF accession: %s -> %s" % (tf,tf_dict[tf]))
+            tf_accession = tf_dict[tf]
             outline = template.substitute(genome_accession="NC_000913.2", # Build v. 2
                                           TF = line[tf_name],
                                           TF_accession=tf_accession,
