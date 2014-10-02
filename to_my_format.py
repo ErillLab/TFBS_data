@@ -81,10 +81,10 @@ def from_collectf(row, genomes):
     genome = genomes[row.genome_accession]
     start, end, strand = row.site_start, row.site_end, row.site_strand
     my_start, my_end = from_collectf_loc(start, end, strand)
-    print start, end, my_start, my_end
+    #print start, end, my_start, my_end
     genome_seq = genome.seq.tostring()
     site_seq = get_sequence(genome_seq, my_start, my_end, strand)
-    print row.sequence, site_seq, strand
+    #print row.sequence, site_seq, strand
     assert site_seq == row.sequence, 'site location error'
     left_flanking = get_sequence(genome_seq, my_start-100, my_start, strand)
     right_flanking = get_sequence(genome_seq, my_end, my_end+100, strand)
@@ -196,7 +196,7 @@ def from_regtransbase(row, genomes):
     the top of this file"""
     genome = genomes[row.genome_accession]
     tf_accession = get_tf_accession(genome, row.TF)
-    print row.genome_accession, row.TF, tf_accession
+    #print row.genome_accession, row.TF, tf_accession
     return row
 
 def regtransbase_reformat(regtransbase_file):
@@ -225,10 +225,8 @@ def merge_all():
     dbtbs_file = 'dbtbs/dbtbs.tsv'
     dbtbs_df = pd.read_csv(dbtbs_file, sep='\t')
 
-    df = pd.concat([collectf_df,
-                    mtbreglist_df,
-                    regulondb_df,
-                    dbtbs_df])
+    df = pd.concat([collectf_df, mtbreglist_df, regulondb_df, dbtbs_df],
+                   ignore_index=True)
 
     # Some TF accesssions have version number (e.g. NP_389668.1) and some don't
     # (e.g. NP_389668). Make them have the same format.
@@ -283,13 +281,15 @@ def remove_duplicates(df):
                rowa['TF'] == rowb['TF'] and
                (get_overlap(loca, locb) + get_overlap(locb, loca))/2 >= 0.75)
 
-        if ret:
-            print rowa['genome_accession'], rowa['TF'], loca, locb,
-            print rowa['database'], rowb['database']
+        #if ret:
+        #    print rowa['genome_accession'], rowa['TF'], loca, locb,
+        #    print rowa['database'], rowb['database']
         return ret
 
     rows = df.T.to_dict().values()
+    print len(rows)
     unique_rows = list_utils.nub_by(overlap_test, rows)
+    print len(unique_rows)
     return pd.DataFrame(unique_rows)
 
 if __name__ == '__main__':
