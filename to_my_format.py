@@ -21,6 +21,7 @@ import pandas as pd
 from Bio import SeqIO
 from Bio import Entrez
 Entrez.email = 'sefa1@umbc.edu'
+from pyutils import list_utils # github.com/sefakilic/pyutils
 
 GENOMES_DIR = '/home/sefa/Downloads/'
 
@@ -233,7 +234,9 @@ def merge_all():
     # (e.g. NP_389668). Make them have the same format.
     df['TF_accession'] = df.apply(lambda x: x['TF_accession'].split('.')[0],
                                   axis=1)
-    
+
+    # remove duplicates
+    df = remove_duplicates(df)
 
     # sort rows by TF, TF accesion, genome accession and start position
     df = df.sort(['TF', 'TF_accession', 'genome_accession', 'site_start'])
@@ -252,5 +255,38 @@ def merge_all():
            'evidence',
            'database',
            'alternative_database_id']
-    df.to_csv('tfbs_data_merged.tsv', cols=cols, sep='\t', index=False)
 
+    
+    df.to_csv('tfbs_data_merged.tsv', cols=cols, sep='\t', index=False)
+    return df
+
+def remove_duplicates(df):
+    """The same site may occur in different databases, sometimes in slightly
+    different location (i.e. (x, x+10) vs. (x-1, x+1), etc.). This function
+    removes duplicates from the data frame.
+
+    To merge sites, the method used in CollecTF is adopted. If two sites (from
+    same TF and same genome, they are merged if the overlap between two sites
+    is >75% of the combined site length.
+    """
+    def overlap_test(rowa, rowb):
+        """Given two rows (i.e. binding sites) from the data frame, check if
+        they belong to the same TF/species and if so, check if they overlap.
+        """
+        def get_overlap(loca, locb):
+            """Given two locations, return the overlap ratio."""
+            overlap_len = max(0, min(loca[1], locb[1]) - max(loca[0], locb[0]))
+            return float(overlap_len) / (loca[1]-loca[0]+1)
+            
+        loca = (rowa['site_start'], rowa['site_end'])
+        locb = (rowb['site_start'], rowb['site_end'])
+        return (rowa['genome_accession'] == rowb['genome_accession'] and
+                rowa['TF'] == rowb['TF'] and
+                (get_overlap(loca, locb) + get_overlap(locb, loca))/2 >= 0.75)
+
+    rows = df.T.to_dict().values()
+    unique_rows = list_utils.nub_by(overlap_test, rows)
+    return pd.DataFrame(unique_rows)
+
+if __name__ == '__main__':
+    merge_all()
