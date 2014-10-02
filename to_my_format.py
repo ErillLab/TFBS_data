@@ -280,9 +280,14 @@ def remove_duplicates(df):
             
         loca = (rowa['site_start'], rowa['site_end'])
         locb = (rowb['site_start'], rowb['site_end'])
-        return (rowa['genome_accession'] == rowb['genome_accession'] and
-                rowa['TF'] == rowb['TF'] and
-                (get_overlap(loca, locb) + get_overlap(locb, loca))/2 >= 0.75)
+        ret = (rowa['genome_accession'] == rowb['genome_accession'] and
+               rowa['TF'] == rowb['TF'] and
+               (get_overlap(loca, locb) + get_overlap(locb, loca))/2 >= 0.75)
+
+        if ret:
+            print rowa['genome_accession'], rowa['TF'], loca, locb
+
+        return ret
 
     rows = df.T.to_dict().values()
     unique_rows = list_utils.nub_by(overlap_test, rows)
