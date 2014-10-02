@@ -21,7 +21,7 @@ def get_org_name(acc):
         out_handle.close()
     # read record
     record = SeqIO.read(genbank_file, 'genbank')
-    return record
+    return record.description
 
 
 def group_sites(df):
@@ -42,6 +42,6 @@ def main():
     groups = group_sites(df)
     motif_sizes = groups.size().reset_index().rename(columns={0:'motif_size'})
     motif_sizes['organism'] = motif_sizes.apply(
-        lambda row: get_org_name(row['genome_accession']))
+        lambda row: get_org_name(row['genome_accession']), axis=1)
     motif_sizes.to_csv('motif_sizes.csv', index=False)
     

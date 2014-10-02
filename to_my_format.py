@@ -277,7 +277,6 @@ def remove_duplicates(df):
             """Given two locations, return the overlap ratio."""
             overlap_len = max(0, min(loca[1], locb[1]) - max(loca[0], locb[0]))
             return float(overlap_len) / (loca[1]-loca[0]+1)
-            
         loca = (rowa['site_start'], rowa['site_end'])
         locb = (rowb['site_start'], rowb['site_end'])
         ret = (rowa['genome_accession'] == rowb['genome_accession'] and
@@ -285,8 +284,8 @@ def remove_duplicates(df):
                (get_overlap(loca, locb) + get_overlap(locb, loca))/2 >= 0.75)
 
         if ret:
-            print rowa['genome_accession'], rowa['TF'], loca, locb
-
+            print rowa['genome_accession'], rowa['TF'], loca, locb,
+            print rowa['database'], rowb['database']
         return ret
 
     rows = df.T.to_dict().values()
