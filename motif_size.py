@@ -5,6 +5,8 @@ import os
 from Bio import Entrez
 from Bio import SeqIO
 Entrez.email = 'sefa1@umbc.edu'
+import matplotlib.pyplot as plt
+from ggplot import *
 
 def get_org_name(acc):
     """Get genome record"""
@@ -37,11 +39,22 @@ def group_sites(df):
     grps = df.groupby(['TF_accession', 'genome_accession', 'TF'])
     return grps
 
-def main():
+def motif_sizes():
     df = pd.read_csv('tfbs_data_merged.tsv', sep='\t')
     groups = group_sites(df)
     motif_sizes = groups.size().reset_index().rename(columns={0:'motif_size'})
-    motif_sizes['organism'] = motif_sizes.apply(
-        lambda row: get_org_name(row['genome_accession']), axis=1)
     motif_sizes.to_csv('motif_sizes.csv', index=False)
+    motif_sizes = motif_sizes[motif_sizes['motif_size'] <= 100]
+    p = ggplot(aes(x='motif_size'), motif_sizes) + geom_histogram(binwidth=1)
+    ggsave(p, "motif_sizes.pdf")
     
+
+
+def num_sites_by_db():
+    plt.clf()
+    df = pd.read_csv('tfbs_data_merged.tsv', sep='\t')
+    x = df.groupby('database').size()
+    x.plot(kind='bar', rot=0)
+    plt.xlabel("")
+    plt.ylabel("Number of sites")
+    plt.savefig('num_sites_by_db.pdf')

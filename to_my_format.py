@@ -225,7 +225,10 @@ def merge_all():
     dbtbs_file = 'dbtbs/dbtbs.tsv'
     dbtbs_df = pd.read_csv(dbtbs_file, sep='\t')
 
-    df = pd.concat([collectf_df, mtbreglist_df, regulondb_df, dbtbs_df],
+    coryneregnet_file = 'coryneRegNet/coryneRegNet.tsv'
+    coryneregnet_df = pd.read_csv(coryneregnet_file, sep='\t')
+
+    df = pd.concat([collectf_df, mtbreglist_df, regulondb_df, dbtbs_df, coryneregnet_df],
                    ignore_index=True)
 
     # Some TF accesssions have version number (e.g. NP_389668.1) and some don't
@@ -254,7 +257,10 @@ def merge_all():
            'database',
            'alternative_database_id']
 
-    
+    # strip cells
+    for col in cols:
+        df[col] = df[col].map(lambda x: str(x).strip())
+
     df.to_csv('tfbs_data_merged.tsv', cols=cols, sep='\t', index=False)
     return df
 
