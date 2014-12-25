@@ -59,12 +59,10 @@ def get_sequence(genome_seq, start, end, strand):
         site_seq = reverse_complement(site_seq)
     return site_seq
 
-
 def from_collectf_mode(mode):
     """Map CollecTF TF mode to my format"""
     if pd.isnull(mode):
         return 'undefined'
-        
     modes = {'ACT': 'activator',
              'REP': 'repressor',
              'DUAL': 'dual',
@@ -235,7 +233,6 @@ def merge_all():
     # (e.g. NP_389668). Make them have the same format.
     df['TF_accession'] = df.apply(lambda x: x['TF_accession'].split('.')[0],
                                   axis=1)
-
     # remove duplicates
     df = remove_duplicates(df)
 
@@ -261,17 +258,18 @@ def merge_all():
     for col in cols:
         df[col] = df[col].map(lambda x: str(x).strip())
 
-    df.to_csv('tfbs_data_merged.tsv', cols=cols, sep='\t', index=False)
+    df.to_csv('merged_data.tsv', cols=cols, sep='\t', index=False)
     return df
 
 def remove_duplicates(df):
     """The same site may occur in different databases, sometimes in slightly
-    different location (i.e. (x, x+10) vs. (x-1, x+1), etc.). This function
-    removes duplicates from the data frame.
+    different location (e.g. [x, x+10] vs. [x-1, x+9]). This function removes
+    duplicates from the data frame.
 
     To merge sites, the method used in CollecTF is adopted. If two sites (from
     same TF and same genome, they are merged if the overlap between two sites
     is >75% of the combined site length.
+
     """
     def overlap_test(rowa, rowb):
         """Given two rows (i.e. binding sites) from the data frame, check if
