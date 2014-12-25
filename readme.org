@@ -52,7 +52,16 @@ either strand of the genome.
 ** Concatenated data
 
 The csv files (one from each database) are concatenated into
-=tfbs_data_merged.tsv= (see =to_my_format.py=). The RegTransBase is not included
+=merged_data.tsv= (see =reformat.py=). The RegTransBase is not included
 in the merged file as most of its sites don't have any associated experimental
 evidence (see =regtransbase= readme file).
+
+** Removing duplicates
+It is possible that the same binding site may be present in multiple databases
+in slightly different genomic location (e.g. [x, x+19] vs. [x-1, x+19]). Such
+duplicates are removed from the final merged data.
+
+If two sites, from the same TF and same genome, overlap more than 75% of the
+combined length, one of such sites is selected and the other one is
+discarded. The selection of one over the other is arbitrary.
 

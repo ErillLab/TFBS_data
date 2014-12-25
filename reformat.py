@@ -266,7 +266,7 @@ def remove_duplicates(df):
     different location (e.g. [x, x+10] vs. [x-1, x+9]). This function removes
     duplicates from the data frame.
 
-    To merge sites, the method used in CollecTF is adopted. If two sites (from
+    To merge sites, the method used in CollecTF is adopted. Two sites (from
     same TF and same genome, they are merged if the overlap between two sites
     is >75% of the combined site length.
 
